@@ -19,6 +19,11 @@ export default function MovieDetails() {
   const [submitError, setSubmitError] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
+  // review editing state
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editRating, setEditRating] = useState<number>(5);
+  const [editComment, setEditComment] = useState<string>("");
+
   useEffect(() => {
     const fetchMovie = async () => {
       try {
@@ -37,6 +42,12 @@ export default function MovieDetails() {
     fetchMovie();
   }, [id]);
 
+  const refetchMovie = async () => {
+    const res = await API.get(`/movies/${id}`);
+    setMovie(res.data.data.movie);
+    setReviews(res.data.data.reviews);
+  };
+
   const handleSubmitReview = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError("");
@@ -46,11 +57,7 @@ export default function MovieDetails() {
       await API.post("/reviews", { movieId: id, rating, comment });
       setComment("");
       setRating(5);
-
-      // refetch just to update the reviews list
-      const res = await API.get(`/movies/${id}`);
-      setMovie(res.data.data.movie);
-      setReviews(res.data.data.reviews);
+      await refetchMovie();
     } catch (err: unknown) {
       setSubmitError(
         (err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to submit review",
@@ -70,6 +77,43 @@ export default function MovieDetails() {
     } catch (err: unknown) {
       setError(
         (err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to delete movie",
+      );
+    }
+  };
+
+  const startEditingReview = (review: Review) => {
+    setEditingReviewId(review._id);
+    setEditRating(review.rating);
+    setEditComment(review.comment);
+  };
+
+  const cancelEditingReview = () => {
+    setEditingReviewId(null);
+  };
+
+  const handleUpdateReview = async (e: FormEvent, reviewId: string) => {
+    e.preventDefault();
+    try {
+      await API.patch(`/reviews/${reviewId}`, { rating: editRating, comment: editComment });
+      setEditingReviewId(null);
+      await refetchMovie();
+    } catch (err: unknown) {
+      setSubmitError(
+        (err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to update review",
+      );
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    const confirmed = window.confirm("Delete your review?");
+    if (!confirmed) return;
+
+    try {
+      await API.delete(`/reviews/${reviewId}`);
+      await refetchMovie();
+    } catch (err: unknown) {
+      setError(
+        (err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to delete review",
       );
     }
   };
@@ -182,15 +226,75 @@ export default function MovieDetails() {
         {reviews.length === 0 ? (
           <p className="text-text-muted">No reviews yet. Be the first!</p>
         ) : (
-          reviews.map((review) => (
-            <div key={review._id} className="rounded-xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-heading">{review.user.userName}</span>
-                <span className="text-gold">{"★".repeat(review.rating)}</span>
+          reviews.map((review) => {
+            const isOwner = review.user._id === user?.id;
+            const isEditing = editingReviewId === review._id;
+
+            return (
+              <div key={review._id} className="rounded-xl border border-border bg-card p-4">
+                {isEditing ? (
+                  <form onSubmit={(e) => handleUpdateReview(e, review._id)} className="space-y-3">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setEditRating(star)}
+                          className={`text-2xl ${star <= editRating ? "text-gold" : "text-text-disabled"}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={editComment}
+                      onChange={(e) => setEditComment(e.target.value)}
+                      required
+                      rows={3}
+                      className="w-full rounded-xl border border-border bg-input px-4 py-2 text-text"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-primary px-4 py-1.5 text-sm font-semibold text-white hover:bg-primary-hover"
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cancelEditingReview}
+                        className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-text hover:bg-surface"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-heading">{review.user.userName}</span>
+                      <span className="text-gold">{"★".repeat(review.rating)}</span>
+                    </div>
+                    <p className="mt-2 text-text">{review.comment}</p>
+
+                    {isOwner && (
+                      <div className="mt-3 flex gap-3 text-sm">
+                        <button onClick={() => startEditingReview(review)} className="text-link hover:text-link-hover">
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReview(review._id)}
+                          className="text-error hover:text-error-hover"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-              <p className="mt-2 text-text">{review.comment}</p>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
