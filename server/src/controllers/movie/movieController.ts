@@ -70,7 +70,15 @@ export const getMovieById = async (req: Request, res: Response) => {
 
     const reviews = await Review.find({ movie: movie._id }).populate("user", "userName");
 
-    res.status(200).json({ data: { movie, reviews } });
+    const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
+
+    const movieWithRating = {
+      ...movie.toObject(),
+      averageRating: Math.round(avgRating * 10) / 10,
+      reviewCount: reviews.length,
+    };
+
+    res.status(200).json({ data: { movie: movieWithRating, reviews } });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch movie", error });
   }
