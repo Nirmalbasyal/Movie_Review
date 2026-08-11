@@ -17,11 +17,11 @@ Password: admin123
 
 Or register a new account from the app to test as a regular user.
 
-🛠️ Tech Stack
+ Tech Stack
 
 Frontend: React (Vite), TypeScript, Tailwind CSS, React Router Backend: Node.js, Express, TypeScript, MongoDB (Mongoose) Auth: JWT, bcrypt File Storage: Cloudinary (movie thumbnails) Deployment: Vercel (frontend), Render (backend), MongoDB Atlas (database)
 
-✨ Features
+Features
 
 Admin
 
@@ -37,16 +37,6 @@ View movie details, average rating, and all reviews
 Submit a star rating + written review (one review per movie per user)
 Edit or delete their own review
 
-General
-
-Role-based access control (admin vs. user) enforced via middleware
-Protected routes on the frontend (redirects unauthenticated/unauthorized users)
-Responsive design
-🚀 Running Locally
-Prerequisites
-Node.js v18+
-A MongoDB connection string (local or MongoDB Atlas)
-A Cloudinary account (for thumbnail uploads)
 
 API Overview
 Method	Route	Access	Description
