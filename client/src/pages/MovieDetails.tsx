@@ -167,6 +167,7 @@ export default function MovieDetails() {
       </div>
 
       {/* Review form */}
+      {/* Review form */}
       <div className="mt-12 rounded-2xl border border-border bg-card p-6">
         <h2 className="text-xl font-semibold text-heading">Write a Review</h2>
 
@@ -177,6 +178,8 @@ export default function MovieDetails() {
             </Link>{" "}
             to leave a review.
           </p>
+        ) : user.role === "admin" ? (
+          <p className="mt-3 text-text-muted">Admins cannot submit reviews.</p>
         ) : alreadyReviewed ? (
           <p className="mt-3 text-text-muted">You've already reviewed this movie.</p>
         ) : (

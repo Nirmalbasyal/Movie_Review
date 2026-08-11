@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams,useLocation } from "react-router-dom";
+
 import API from "../http/api";
 
 export default function AddMovie() {
@@ -18,6 +19,9 @@ export default function AddMovie() {
   const [loading, setLoading] = useState(isEditMode);
 
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const cameFromAdmin = location.state?.from === "admin";
 
   // if editing, load the existing movie's data first
   useEffect(() => {
@@ -80,7 +84,13 @@ export default function AddMovie() {
         setSuccess("Movie added successfully");
       }
 
-      setTimeout(() => navigate(isEditMode ? `/movies/${id}` : "/"), 1200);
+    setTimeout(() => {
+      if (isEditMode) {
+        navigate(cameFromAdmin ? "/admin" : `/movies/${id}`);
+      } else {
+        navigate("/");
+      }
+    }, 1200);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to save movie");
     } finally {

@@ -35,14 +35,12 @@ export default function Navbar() {
 
           {user?.role === "admin" && (
             <Link
-              to="/add-movie"
+              to="/admin"
               className={`border-b-2 pb-1 transition ${
-                isActive("/add-movie")
-                  ? "border-gold text-heading"
-                  : "border-transparent text-text-muted hover:text-text"
+                isActive("/admin") ? "border-gold text-heading" : "border-transparent text-text-muted hover:text-text"
               }`}
             >
-              Add Movie
+              Admin Dashboard
             </Link>
           )}
         </div>

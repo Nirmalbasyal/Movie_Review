@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MovieDetails from "./pages/MovieDetails";
 import AddMovie from "./pages/AddMovie";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
@@ -29,6 +30,14 @@ export default function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <AddMovie />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
