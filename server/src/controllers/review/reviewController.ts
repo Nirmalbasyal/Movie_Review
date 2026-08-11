@@ -6,6 +6,10 @@ import { AuthRequest } from "../../middleware/isAuthenticated";
 // User: submit a review for a movie
 export const createReview = async (req: AuthRequest, res: Response) => {
   try {
+    if (req.user!.role === "admin") {
+      return res.status(403).json({ message: "Admins cannot submit reviews" });
+    }
+
     const { movieId, rating, comment } = req.body;
 
     const movie = await Movie.findById(movieId);
@@ -13,7 +17,6 @@ export const createReview = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Movie not found" });
     }
 
-    // prevent duplicate review from same user on same movie
     const existingReview = await Review.findOne({ movie: movieId, user: req.user!.id });
     if (existingReview) {
       return res.status(400).json({ message: "You already reviewed this movie" });
@@ -33,7 +36,6 @@ export const createReview = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to submit review", error });
   }
 };
-
 // User: update their own review
 export const updateReview = async (req: AuthRequest, res: Response) => {
   try {
