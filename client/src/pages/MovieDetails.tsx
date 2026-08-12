@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../http/api";
 import type { Movie, Review } from "../types";
 import { useAuth } from "../context/AuthContext";
+import Loader from "../components/Loader";
 
 export default function MovieDetails() {
   const { id } = useParams<{ id: string }>();
@@ -119,7 +120,7 @@ export default function MovieDetails() {
   };
 
   if (loading) {
-    return <p className="mx-auto max-w-4xl px-6 py-24 text-text-muted">Loading...</p>;
+return <Loader label="Loading movie..." />;
   }
 
   if (error || !movie) {

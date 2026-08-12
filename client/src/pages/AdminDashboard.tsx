@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../http/api";
 import type { Movie } from "../types";
+import Loader from "../components/Loader";
 
 export default function AdminDashboard() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -41,7 +42,7 @@ export default function AdminDashboard() {
   };
 
   if (loading) {
-    return <p className="mx-auto max-w-6xl px-6 py-24 text-text-muted">Loading dashboard...</p>;
+    return <Loader label="Loading dashboard..." />;
   }
 
   const totalReviews = movies.reduce((sum, m) => sum + m.reviewCount, 0);

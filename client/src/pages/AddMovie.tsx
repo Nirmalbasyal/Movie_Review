@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useNavigate, useParams,useLocation } from "react-router-dom";
 
 import API from "../http/api";
+import Loader from "../components/Loader";
 
 export default function AddMovie() {
   const { id } = useParams<{ id: string }>();
@@ -99,7 +100,7 @@ export default function AddMovie() {
   };
 
   if (loading) {
-    return <p className="mx-auto max-w-lg px-6 py-24 text-text-muted">Loading...</p>;
+   return <Loader label="Loading Movie..." />;
   }
 
   return (
