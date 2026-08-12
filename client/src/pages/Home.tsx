@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../http/api";
 import type { Movie } from "../types";
+import Loader from "../components/Loader";
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -29,7 +30,7 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <p className="mx-auto max-w-5xl px-6 py-24 text-text-muted">Loading movies...</p>;
+    return <Loader label="Loading movies..." />;
   }
 
   if (error) {
