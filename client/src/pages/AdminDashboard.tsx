@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   };
 
   if (loading) {
-    return <Loader label="Loading movie..." />;
+    return <Loader label="Loading dashboard..." />;
   }
 
   const totalReviews = movies.reduce((sum, m) => sum + m.reviewCount, 0);
