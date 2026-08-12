@@ -12,6 +12,19 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+       if (!userName || userName.trim().length < 3) {
+         return res.status(400).json({ message: "Username must be at least 3 characters" });
+       }
+
+       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+       if (!userEmail || !emailRegex.test(userEmail.trim())) {
+         return res.status(400).json({ message: "Enter a valid email address" });
+       }
+
+       if (!userPassword || userPassword.length < 6) {
+         return res.status(400).json({ message: "Password must be at least 6 characters" });
+       }
+
     const existingUser = await User.findOne({ userEmail });
     if (existingUser) {
       return res.status(400).json({ message: "Email already registered" });
