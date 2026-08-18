@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import MovieDetails from "./pages/MovieDetails";
 import AddMovie from "./pages/AddMovie";
 import AdminDashboard from "./pages/AdminDashboard";
+import Watchlist from "./pages/Watchlist";
 
 export default function App() {
   return (
@@ -41,6 +42,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+      
+        <Route
+          path="/watchlist"
+          element={
+            <ProtectedRoute>
+              <Watchlist />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </>
   );

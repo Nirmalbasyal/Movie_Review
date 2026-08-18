@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import movieRoutes from "./routes/movieRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
+import watchlistRoutes from "./routes/watchlistRoutes";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/watchlist", watchlistRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

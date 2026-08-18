@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../http/api";
 import { useAuth } from "../context/AuthContext";
+import { useAppDispatch } from "../store/hooks";
+import { fetchWatchlist } from "../store/watchlistSlice";
 
 export default function Login() {
   const [userEmail, setUserEmail] = useState("");
@@ -10,6 +12,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -20,6 +23,7 @@ export default function Login() {
     try {
       const res = await API.post("/auth/login", { userEmail, userPassword });
       login(res.data.data, res.data.token);
+      dispatch(fetchWatchlist());
       navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");

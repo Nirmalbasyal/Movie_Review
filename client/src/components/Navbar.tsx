@@ -1,13 +1,18 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { resetWatchlist } from "../store/watchlistSlice";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
+  const watchlistCount = useAppSelector((state) => state.watchlist.items.length);
 
   const handleLogout = () => {
     logout();
+    dispatch(resetWatchlist());
     navigate("/");
   };
 
@@ -32,6 +37,24 @@ export default function Navbar() {
           >
             Movies
           </Link>
+
+          {user && user.role !== "admin" && (
+            <Link
+              to="/watchlist"
+              className={`relative border-b-2 pb-1 transition ${
+                isActive("/watchlist")
+                  ? "border-gold text-heading"
+                  : "border-transparent text-text-muted hover:text-text"
+              }`}
+            >
+              Watchlist
+              {watchlistCount > 0 && (
+                <span className="absolute -right-4 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">
+                  {watchlistCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {user?.role === "admin" && (
             <Link

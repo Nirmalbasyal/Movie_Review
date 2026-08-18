@@ -4,6 +4,8 @@ import API from "../http/api";
 import type { Movie, Review } from "../types";
 import { useAuth } from "../context/AuthContext";
 import Loader from "../components/Loader";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { addToWatchlistAsync, removeFromWatchlistAsync } from "../store/watchlistSlice";
 
 export default function MovieDetails() {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +21,10 @@ export default function MovieDetails() {
   const [comment, setComment] = useState<string>("");
   const [submitError, setSubmitError] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+  const watchlistItems = useAppSelector((state) => state.watchlist.items);
+  const isInWatchlist = watchlistItems.some((m) => m._id === id);
 
   // review editing state
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
@@ -79,6 +85,15 @@ export default function MovieDetails() {
       setError(
         (err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to delete movie",
       );
+    }
+  };
+
+  const handleToggleWatchlist = () => {
+    if (!id) return;
+    if (isInWatchlist) {
+      dispatch(removeFromWatchlistAsync(id));
+    } else {
+      dispatch(addToWatchlistAsync(id));
     }
   };
 
@@ -164,6 +179,20 @@ return <Loader label="Loading movie..." />;
               </button>
             </div>
           )}
+
+          {user && (
+            <button
+              onClick={handleToggleWatchlist}
+              className={`mt-4 rounded-lg border px-4 py-2 text-sm font-medium transition ${
+                isInWatchlist
+                  ? "border-error text-error hover:bg-error hover:text-white"
+                  : "border-primary text-primary hover:bg-primary hover:text-white"
+              }`}
+            >
+              {isInWatchlist ? "− Remove from Watchlist" : "+ Add to Watchlist"}
+            </button>
+          )}
+          
         </div>
       </div>
 
