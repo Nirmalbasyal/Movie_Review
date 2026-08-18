@@ -1,5 +1,5 @@
 import express from "express";
-import { addToWatchlist, removeFromWatchlist, getMyWatchlist } from "../controllers/watchlist/watchListController";
+import { addToWatchlist, removeFromWatchlist, getMyWatchlist } from "../controllers/watchlist/watchlistController";
 import isAuthenticated from "../middleware/isAuthenticated";
 
 const router = express.Router();
